@@ -17,7 +17,6 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping(path = "/register")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void register(@Validated @RequestBody UserDto userDto) {
         userService.saveUser(userDto);
     }
