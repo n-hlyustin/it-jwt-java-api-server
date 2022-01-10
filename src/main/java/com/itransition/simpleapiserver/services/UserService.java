@@ -41,4 +41,8 @@ public class UserService {
     public User getUserById(Long id) {
         return userDao.getById(id);
     }
+
+    public User getUserByEmail(String email) {
+        return userDao.getByEmail(email);
+    }
 }
