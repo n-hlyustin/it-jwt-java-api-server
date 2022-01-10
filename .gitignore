@@ -18,6 +18,9 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
+### JPB ###
+.jpb
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
