@@ -2,6 +2,7 @@ package com.itransition.simpleapiserver.services;
 
 import com.itransition.simpleapiserver.dao.UserDao;
 import com.itransition.simpleapiserver.dto.LoginDto;
+import com.itransition.simpleapiserver.dto.SuccessLoginDto;
 import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.entities.User;
 import com.itransition.simpleapiserver.security.JwtTokenRepository;
@@ -26,7 +27,7 @@ public class UserService {
         userDao.save(userDto);
     }
 
-    public String authUser(LoginDto loginDto) {
+    public SuccessLoginDto authUser(LoginDto loginDto) {
         User user = userDao.getByEmail(loginDto.getEmail());
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password are incorrect");
@@ -34,8 +35,9 @@ public class UserService {
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password are incorrect");
         }
-        String token = jwtTokenRepository.generateToken(user.getId());
-        return token;
+        SuccessLoginDto successLoginDto = new SuccessLoginDto();
+        successLoginDto.setToken(jwtTokenRepository.generateToken(user.getId()));
+        return successLoginDto;
     }
 
     public User getUserById(Long id) {

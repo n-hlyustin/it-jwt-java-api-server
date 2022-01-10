@@ -1,6 +1,7 @@
 package com.itransition.simpleapiserver.controllers;
 
 import com.itransition.simpleapiserver.dto.LoginDto;
+import com.itransition.simpleapiserver.dto.SuccessLoginDto;
 import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +18,13 @@ public class AuthController {
 
     @PostMapping(path = "/register")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public String register(@Validated @RequestBody UserDto userDto) {
+    public void register(@Validated @RequestBody UserDto userDto) {
         userService.saveUser(userDto);
-        return null;
     }
 
     @PostMapping(path = "/login")
     @ResponseStatus(value = HttpStatus.OK)
-    public @ResponseBody String login(@Validated @RequestBody LoginDto loginDto) {
-        String token = userService.authUser(loginDto);
-        return token;
+    public SuccessLoginDto login(@Validated @RequestBody LoginDto loginDto) {
+        return userService.authUser(loginDto);
     }
 }
