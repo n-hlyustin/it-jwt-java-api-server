@@ -33,6 +33,6 @@ public class UserDao {
 
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
-            .orElse(null);
+            .orElseThrow(() -> new EntityNotFoundException());
     }
 }
