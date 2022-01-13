@@ -26,4 +26,8 @@ public class User implements Serializable {
 
     @Column(name = "lastname", length = 32)
     private String lastName;
+
+    public String getRole() {
+        return "User";
+    }
 }

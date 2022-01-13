@@ -1,9 +1,11 @@
 package com.itransition.simpleapiserver.security;
-import com.itransition.simpleapiserver.configuration.CustomUserDetails;
-import com.itransition.simpleapiserver.configuration.CustomUserDetailsService;
+import com.itransition.simpleapiserver.entities.User;
+import com.itransition.simpleapiserver.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -14,7 +16,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Optional;
+import java.util.*;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -27,7 +29,7 @@ public class JwtFilter extends GenericFilterBean {
 
     private final JwtTokenRepository jwtTokenRepository;
 
-    private final CustomUserDetailsService customUserDetailsService;
+    private final UserService userService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -37,8 +39,9 @@ public class JwtFilter extends GenericFilterBean {
                 return;
             }
             Long id = jwtTokenRepository.getIdFromToken(data);
-            CustomUserDetails customUserDetails = customUserDetailsService.loadUserById(id);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+            User user = userService.getUserById(id);
+            List<GrantedAuthority> authorities = buildUserAuthority(user.getRole());
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(auth);
         });
         filterChain.doFilter(servletRequest, servletResponse);
@@ -50,5 +53,15 @@ public class JwtFilter extends GenericFilterBean {
             return Optional.of(bearer.substring(7));
         }
         return Optional.empty();
+    }
+
+    private List<GrantedAuthority> buildUserAuthority(String userRoles) {
+        Set<GrantedAuthority> setAuths = new HashSet<>();
+
+        setAuths.add(new SimpleGrantedAuthority(userRoles));
+
+        List<GrantedAuthority> Result = new ArrayList<>(setAuths);
+
+        return Result;
     }
 }
