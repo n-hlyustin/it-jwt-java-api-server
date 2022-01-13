@@ -27,7 +27,7 @@ public class JwtFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION = "Authorization";
 
-    private final JwtTokenRepository jwtTokenRepository;
+    private final JwtHelper jwtHelper;
 
     private final UserService userService;
 
@@ -35,10 +35,10 @@ public class JwtFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         Optional<String> token = getTokenFromRequest((HttpServletRequest) servletRequest);
         token.ifPresent(data -> {
-            if (!jwtTokenRepository.validateToken(data)) {
+            if (!jwtHelper.validateToken(data)) {
                 return;
             }
-            Long id = jwtTokenRepository.getIdFromToken(data);
+            Long id = jwtHelper.getIdFromToken(data);
             User user = userService.getUserById(id);
             List<GrantedAuthority> authorities = buildUserAuthority(user.getRole());
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, authorities);

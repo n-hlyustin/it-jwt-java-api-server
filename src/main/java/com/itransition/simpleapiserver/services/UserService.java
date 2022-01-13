@@ -5,7 +5,7 @@ import com.itransition.simpleapiserver.dto.LoginDto;
 import com.itransition.simpleapiserver.dto.SuccessLoginDto;
 import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.entities.User;
-import com.itransition.simpleapiserver.security.JwtTokenRepository;
+import com.itransition.simpleapiserver.security.JwtHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserService {
     private final UserDao userDao;
 
-    private final JwtTokenRepository jwtTokenRepository;
+    private final JwtHelper jwtHelper;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -34,7 +34,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password are incorrect");
         }
         SuccessLoginDto successLoginDto = new SuccessLoginDto();
-        successLoginDto.setToken(jwtTokenRepository.generateToken(user.getId()));
+        successLoginDto.setToken(jwtHelper.generateToken(user.getId()));
         return successLoginDto;
     }
 

@@ -13,7 +13,7 @@ import java.util.Date;
 
 @Component
 @Log
-public class JwtTokenRepository {
+public class JwtHelper {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
