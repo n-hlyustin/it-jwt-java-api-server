@@ -2,16 +2,16 @@ package com.itransition.simpleapiserver.configuration;
 
 import com.itransition.simpleapiserver.entities.User;
 import com.itransition.simpleapiserver.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     public CustomUserDetails loadUserById(Long id) throws UsernameNotFoundException {
         User user = userService.getUserById(id);
