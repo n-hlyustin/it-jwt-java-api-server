@@ -1,16 +1,16 @@
 package com.itransition.simpleapiserver.controllers;
 
-import org.springframework.http.HttpStatus;
+import com.itransition.simpleapiserver.entities.User;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 
 @RestController
 public class MainController {
 
     @GetMapping(path = "/hello")
-    @ResponseStatus(value = HttpStatus.OK)
-    public String hello(Principal principal) {
-        return String.format("Hello, %s", principal.getName());
+    public String hello(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return String.format("Hello, %s %s", user.getFirstName(), user.getLastName());
     }
 }

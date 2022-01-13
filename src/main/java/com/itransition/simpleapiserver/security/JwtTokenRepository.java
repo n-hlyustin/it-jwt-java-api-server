@@ -32,7 +32,7 @@ public class JwtTokenRepository {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            log.severe("invalid token");
+            log.severe(String.format("Invalid token: %s", e.toString()));
         }
         return false;
     }
