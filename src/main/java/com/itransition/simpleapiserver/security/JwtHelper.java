@@ -28,14 +28,14 @@ public class JwtHelper {
                 .compact();
     }
 
-    public Optional<String> validateToken(String token) {
+    public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            return Optional.of(token);
+            return true;
         } catch (Exception e) {
             log.severe(String.format("Invalid token: %s", e.toString()));
         }
-        return Optional.empty();
+        return false;
     }
 
     public Long getIdFromToken(String token) {
