@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @Log
@@ -27,14 +28,14 @@ public class JwtHelper {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
+    public Optional<String> validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            return true;
+            return Optional.of(token);
         } catch (Exception e) {
             log.severe(String.format("Invalid token: %s", e.toString()));
         }
-        return false;
+        return Optional.empty();
     }
 
     public Long getIdFromToken(String token) {
