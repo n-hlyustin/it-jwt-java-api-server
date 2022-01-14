@@ -36,7 +36,7 @@ public class JwtFilter extends GenericFilterBean {
         Optional<String> token = getTokenFromRequest((HttpServletRequest) servletRequest);
         Optional.of(token)
             .get()
-            .filter(data -> jwtHelper.validateToken(data))
+            .filter(data -> jwtHelper.isTokenValid(data))
             .ifPresent(validToken -> {
                 Long id = jwtHelper.getIdFromToken(validToken);
                 User user = userService.getUserById(id);
