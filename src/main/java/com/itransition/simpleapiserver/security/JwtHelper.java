@@ -16,7 +16,7 @@ import java.util.Date;
 public class JwtHelper {
 
     @Value("${jwt.secret}")
-    private static String jwtSecret;
+    private String jwtSecret;
 
     public String generateToken(Long id) {
         Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -27,7 +27,7 @@ public class JwtHelper {
                 .compact();
     }
 
-    public static boolean isTokenValid(String token) {
+    public boolean isTokenValid(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
@@ -37,7 +37,7 @@ public class JwtHelper {
         return false;
     }
 
-    public static Long getIdFromToken(String token) {
+    public Long getIdFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
         return Long.parseLong(claims.getSubject());
     }
