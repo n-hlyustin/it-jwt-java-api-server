@@ -1,5 +1,4 @@
 package com.itransition.simpleapiserver.security;
-import com.itransition.simpleapiserver.enums.UserRole;
 import com.itransition.simpleapiserver.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -27,16 +26,14 @@ public class JwtFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION = "Authorization";
 
-    private final JwtHelper jwtHelper;
-
     private final UserService userService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException, NoSuchElementException {
         getTokenFromRequest((HttpServletRequest) servletRequest)
-            .filter(data -> jwtHelper.isTokenValid(data))
-            .map(data -> jwtHelper.getIdFromToken(data))
-            .map(id -> userService.getUserById(id))
+            .filter(JwtHelper::isTokenValid)
+            .map(JwtHelper::getIdFromToken)
+            .map(userService::getUserById)
             .map(user -> {
                 List<GrantedAuthority> authorities = buildUserAuthority(user.getRole().name());
                 return new UsernamePasswordAuthenticationToken(user, null, authorities);

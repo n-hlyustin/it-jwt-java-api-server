@@ -10,14 +10,13 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 @Log
 public class JwtHelper {
 
     @Value("${jwt.secret}")
-    private String jwtSecret;
+    private static String jwtSecret;
 
     public String generateToken(Long id) {
         Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -28,7 +27,7 @@ public class JwtHelper {
                 .compact();
     }
 
-    public boolean isTokenValid(String token) {
+    public static boolean isTokenValid(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
@@ -38,7 +37,7 @@ public class JwtHelper {
         return false;
     }
 
-    public Long getIdFromToken(String token) {
+    public static Long getIdFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
         return Long.parseLong(claims.getSubject());
     }
