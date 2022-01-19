@@ -1,5 +1,6 @@
 package com.itransition.simpleapiserver.entities;
 
+import com.itransition.simpleapiserver.enums.UserRole;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -27,7 +28,7 @@ public class User implements Serializable {
     @Column(name = "lastname", length = 32)
     private String lastName;
 
-    public String getRole() {
-        return "User";
+    public UserRole getRole() {
+        return UserRole.USER;
     }
 }

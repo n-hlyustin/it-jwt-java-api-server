@@ -1,5 +1,5 @@
 package com.itransition.simpleapiserver.security;
-import com.itransition.simpleapiserver.entities.User;
+import com.itransition.simpleapiserver.enums.UserRole;
 import com.itransition.simpleapiserver.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -39,7 +39,7 @@ public class JwtFilter extends GenericFilterBean {
             .map(data -> jwtHelper.getIdFromToken(data.get()))
             .map(id -> userService.getUserById(id))
             .map(user -> {
-                List<GrantedAuthority> authorities = buildUserAuthority(user.getRole());
+                List<GrantedAuthority> authorities = buildUserAuthority(user.getRole().name());
                 return new UsernamePasswordAuthenticationToken(user, null, authorities);
             })
             .ifPresent(auth -> {
