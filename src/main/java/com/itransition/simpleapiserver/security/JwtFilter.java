@@ -40,9 +40,7 @@ public class JwtFilter extends GenericFilterBean {
                 List<GrantedAuthority> authorities = buildUserAuthority(user.getRole().name());
                 return new UsernamePasswordAuthenticationToken(user, null, authorities);
             })
-            .ifPresent(auth -> {
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            });
+            .ifPresent(SecurityContextHolder.getContext()::setAuthentication);
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
