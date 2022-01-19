@@ -33,10 +33,9 @@ public class JwtFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException, NoSuchElementException {
-        Optional<String> token = getTokenFromRequest((HttpServletRequest) servletRequest);
-        Optional.of(token)
-            .filter(data -> jwtHelper.isTokenValid(data.get()))
-            .map(data -> jwtHelper.getIdFromToken(data.get()))
+        getTokenFromRequest((HttpServletRequest) servletRequest)
+            .filter(data -> jwtHelper.isTokenValid(data))
+            .map(data -> jwtHelper.getIdFromToken(data))
             .map(id -> userService.getUserById(id))
             .map(user -> {
                 List<GrantedAuthority> authorities = buildUserAuthority(user.getRole().name());
