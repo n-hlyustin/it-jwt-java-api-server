@@ -1,0 +1,52 @@
+plugins {
+    id "org.springframework.boot" version "2.6.1"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+    id "org.liquibase.gradle" version "2.1.0"
+    id "java"
+}
+
+group = "com.itransition"
+version = "0.0.1-SNAPSHOT"
+sourceCompatibility = "17"
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set("testcontainersVersion", "1.16.2")
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.liquibase:liquibase-core"
+    implementation "org.postgresql:postgresql"
+    implementation "org.hibernate.validator:hibernate-validator"
+    implementation "javax.persistence:javax.persistence-api"
+    implementation "javax.validation:validation-api"
+    implementation "io.jsonwebtoken:jjwt:0.2"
+    compileOnly "org.projectlombok:lombok"
+    liquibaseRuntime "org.postgresql:postgresql"
+    annotationProcessor "org.projectlombok:lombok"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:postgresql"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
