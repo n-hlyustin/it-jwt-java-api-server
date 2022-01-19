@@ -58,11 +58,7 @@ public class JwtFilter extends GenericFilterBean {
 
     private List<GrantedAuthority> buildUserAuthority(String userRoles) {
         Set<GrantedAuthority> setAuths = new HashSet<>();
-
         setAuths.add(new SimpleGrantedAuthority(userRoles));
-
-        List<GrantedAuthority> Result = new ArrayList<>(setAuths);
-
-        return Result;
+        return new ArrayList<>(setAuths);
     }
 }
