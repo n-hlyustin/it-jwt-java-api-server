@@ -38,7 +38,8 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.testcontainers:junit-jupiter"
-    testImplementation "org.testcontainers:postgresql"
+    testImplementation "org.springframework.cloud:spring-cloud-starter-bootstrap:3.1.0"
+    testImplementation "com.playtika.testcontainers:embedded-postgresql:2.0.19"
 }
 
 dependencyManagement {
