@@ -36,6 +36,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok"
     liquibaseRuntime "org.postgresql:postgresql"
     annotationProcessor "org.projectlombok:lombok"
+    testImplementation "org.apache.httpcomponents:httpclient:4.5.6"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "org.springframework.cloud:spring-cloud-starter-bootstrap:3.1.0"
