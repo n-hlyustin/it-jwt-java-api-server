@@ -16,13 +16,13 @@ public class UserDao {
 
     private final PasswordEncoder passwordEncoder;
 
-    public void save(UserDto userDto) {
+    public User save(UserDto userDto) {
         User user = new User();
         user.setFirstName(userDto.getFirstname());
         user.setLastName(userDto.getLastname());
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public User getById(Long id) {
