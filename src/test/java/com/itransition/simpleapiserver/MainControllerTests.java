@@ -61,8 +61,7 @@ public class MainControllerTests {
             "http://localhost:" + port + "/hello",
             HttpMethod.GET,
             this.getAuthenticatedHttpEntity(),
-            String.class,
-            1
+            String.class
         );
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo("Hello, Main Controller");
