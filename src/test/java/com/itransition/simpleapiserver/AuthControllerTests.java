@@ -1,10 +1,10 @@
 package com.itransition.simpleapiserver;
 
-import com.itransition.simpleapiserver.dao.UserDao;
 import com.itransition.simpleapiserver.dto.LoginDto;
 import com.itransition.simpleapiserver.dto.SuccessLoginDto;
 import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.entities.User;
+import com.itransition.simpleapiserver.services.UserService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -31,7 +31,7 @@ public class AuthControllerTests {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
 
     private UserDto existsUserDto;
 
@@ -42,7 +42,7 @@ public class AuthControllerTests {
         existsUserDto.setLastname("Controller");
         existsUserDto.setEmail("AuthLogin@controller.com");
         existsUserDto.setPassword("auth_login_controller_password");
-        User user = userDao.save(existsUserDto);
+        User user = userService.saveUser(existsUserDto);
         existsUserDto.setId(user.getId().intValue());
     }
 

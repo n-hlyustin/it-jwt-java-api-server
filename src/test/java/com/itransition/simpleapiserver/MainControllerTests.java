@@ -2,10 +2,10 @@ package com.itransition.simpleapiserver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.itransition.simpleapiserver.dao.UserDao;
 import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.entities.User;
 import com.itransition.simpleapiserver.security.JwtHelper;
+import com.itransition.simpleapiserver.services.UserService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -34,7 +34,7 @@ public class MainControllerTests {
     private JwtHelper jwtHelper;
 
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
 
     private Long authenticatedUserId;
 
@@ -45,18 +45,18 @@ public class MainControllerTests {
         userDto.setLastname("Controller");
         userDto.setEmail("main@controller.com");
         userDto.setPassword("main_controller_password");
-        User user = userDao.save(userDto);
+        User user = userService.saveUser(userDto);
         this.authenticatedUserId = user.getId();
     }
 
     @Test
-    public void greetingShouldReturnUnauthenticatedMessage() throws Exception {
+    public void greetingShouldReturnUnauthenticatedMessage() {
         HashMap<String, String> body = this.restTemplate.getForObject("http://localhost:" + port + "/hello", HashMap.class);
         assertThat(body.get("error")).isEqualTo("Forbidden");
     }
 
     @Test
-    public void greetingShouldReturnAuthenticatedMessage() throws Exception {
+    public void greetingShouldReturnAuthenticatedMessage() {
         ResponseEntity<String> response = this.restTemplate.exchange(
             "http://localhost:" + port + "/hello",
             HttpMethod.GET,
