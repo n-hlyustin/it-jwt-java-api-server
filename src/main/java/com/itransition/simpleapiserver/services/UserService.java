@@ -7,6 +7,7 @@ import com.itransition.simpleapiserver.entities.User;
 import com.itransition.simpleapiserver.repositories.UserRepository;
 import com.itransition.simpleapiserver.security.JwtHelper;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,14 +26,13 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final ModelMapper modelMapper;
+
     public User saveUser(UserDto userDto) {
         if (this.getUserByEmail(userDto.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided email already exists");
         }
-        User user = new User();
-        user.setFirstName(userDto.getFirstname());
-        user.setLastName(userDto.getLastname());
-        user.setEmail(userDto.getEmail());
+        User user = modelMapper.map(userDto, User.class);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         return userRepository.save(user);
     }
