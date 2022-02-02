@@ -4,10 +4,10 @@ import com.itransition.simpleapiserver.dto.LoginDto;
 import com.itransition.simpleapiserver.dto.SuccessLoginDto;
 import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.entities.User;
+import com.itransition.simpleapiserver.mappers.UserMapper;
 import com.itransition.simpleapiserver.repositories.UserRepository;
 import com.itransition.simpleapiserver.security.JwtHelper;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,13 +26,11 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final ModelMapper modelMapper;
-
     public User saveUser(UserDto userDto) {
         if (this.getUserByEmail(userDto.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided email already exists");
         }
-        User user = modelMapper.map(userDto, User.class);
+        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         return userRepository.save(user);
     }

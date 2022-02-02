@@ -2,6 +2,7 @@ package com.itransition.simpleapiserver.entities;
 
 import com.itransition.simpleapiserver.enums.UserRole;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 @Entity
 @Data
 @Table(name = "\"user\"")
+@RequiredArgsConstructor
 public class User implements Serializable {
 
     @Id

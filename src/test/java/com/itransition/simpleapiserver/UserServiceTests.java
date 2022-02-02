@@ -4,12 +4,12 @@ import com.itransition.simpleapiserver.dto.LoginDto;
 import com.itransition.simpleapiserver.dto.SuccessLoginDto;
 import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.entities.User;
+import com.itransition.simpleapiserver.mappers.UserMapper;
 import com.itransition.simpleapiserver.repositories.UserRepository;
 import com.itransition.simpleapiserver.services.UserService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,9 +34,6 @@ public class UserServiceTests {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
     private User existsUserModel;
 
     private UserDto existsUserDto;
@@ -48,7 +45,7 @@ public class UserServiceTests {
         existsUserDto.setLastname("Service");
         existsUserDto.setEmail("userMain@service.com");
         existsUserDto.setPassword("auth_main_service_password");
-        User userModel = modelMapper.map(existsUserDto, User.class);
+        User userModel = UserMapper.INSTANCE.userDtoToUser(existsUserDto);
         userModel.setPassword(passwordEncoder.encode(existsUserDto.getPassword()));
         existsUserModel = userRepository.save(userModel);
     }
