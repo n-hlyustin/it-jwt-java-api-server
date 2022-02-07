@@ -1,7 +1,7 @@
 package com.itransition.simpleapiserver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itransition.simpleapiserver.configuration.MainProperties;
+import com.itransition.simpleapiserver.configuration.SecurityJwtProperties;
 import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.entities.User;
 import com.itransition.simpleapiserver.mappers.UserMapper;
@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureWebTestClient
 public abstract class Base {
     @Autowired
-    private MainProperties mainProperties;
+    private SecurityJwtProperties securityJwtProperties;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -65,7 +65,7 @@ public abstract class Base {
 
     private JwtHelper getJwtHelper() {
         if (jwtHelper == null) {
-            jwtHelper = new JwtHelper(getMainProperties());
+            jwtHelper = new JwtHelper(getSecurityJwtProperties());
         }
         return jwtHelper;
     }

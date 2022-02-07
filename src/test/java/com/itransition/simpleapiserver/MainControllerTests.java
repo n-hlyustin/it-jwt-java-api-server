@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 public class MainControllerTests extends Base {
     @Test
     public void greetingShouldReturnUnauthenticatedMessage() throws Exception {
-        getMockMvc().perform(get("/hello")).andExpect(status().isUnauthorized());
+        getMockMvc().perform(get("/hello")).andExpect(status().isForbidden());
     }
 
     @Test

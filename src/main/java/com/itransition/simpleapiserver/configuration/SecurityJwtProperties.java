@@ -7,18 +7,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Getter
 @Setter
-class JwtProperties {
-    private String secret;
-}
-
-@Getter
-@Setter
 @Configuration
-@ConfigurationProperties(prefix = "app")
-public class MainProperties {
-    private JwtProperties jwt;
-
-    public String getJwtSecret() {
-        return this.jwt.getSecret();
-    }
+@ConfigurationProperties(prefix = "security.jwt")
+public class SecurityJwtProperties {
+    private String secret;
 }

@@ -1,6 +1,6 @@
 package com.itransition.simpleapiserver.security;
 
-import com.itransition.simpleapiserver.configuration.MainProperties;
+import com.itransition.simpleapiserver.configuration.SecurityJwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,20 +16,20 @@ import java.util.Date;
 @Log
 @RequiredArgsConstructor
 public class JwtHelper {
-    private final MainProperties mainProperties;
+    private final SecurityJwtProperties securityJwtProperties;
 
     public String generateToken(Long id) {
         Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .setSubject(id.toString())
                 .setExpiration(date)
-                .signWith(SignatureAlgorithm.HS512, mainProperties.getJwtSecret())
+                .signWith(SignatureAlgorithm.HS512, securityJwtProperties.getSecret())
                 .compact();
     }
 
     public boolean isTokenValid(String token) {
         try {
-            Jwts.parser().setSigningKey(mainProperties.getJwtSecret()).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(securityJwtProperties.getSecret()).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             log.severe(String.format("Invalid token: %s", e.toString()));
@@ -38,7 +38,7 @@ public class JwtHelper {
     }
 
     public Long getIdFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(mainProperties.getJwtSecret()).parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().setSigningKey(securityJwtProperties.getSecret()).parseClaimsJws(token).getBody();
         return Long.parseLong(claims.getSubject());
     }
 }
