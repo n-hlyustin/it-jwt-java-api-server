@@ -1,10 +1,11 @@
 package com.itransition.simpleapiserver.security;
 
+import com.itransition.simpleapiserver.configuration.MainProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -13,23 +14,22 @@ import java.util.Date;
 
 @Component
 @Log
+@RequiredArgsConstructor
 public class JwtHelper {
-
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final MainProperties mainProperties;
 
     public String generateToken(Long id) {
         Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .setSubject(id.toString())
                 .setExpiration(date)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(SignatureAlgorithm.HS512, mainProperties.getJwtSecret())
                 .compact();
     }
 
     public boolean isTokenValid(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(mainProperties.getJwtSecret()).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             log.severe(String.format("Invalid token: %s", e.toString()));
@@ -38,7 +38,7 @@ public class JwtHelper {
     }
 
     public Long getIdFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().setSigningKey(mainProperties.getJwtSecret()).parseClaimsJws(token).getBody();
         return Long.parseLong(claims.getSubject());
     }
 }

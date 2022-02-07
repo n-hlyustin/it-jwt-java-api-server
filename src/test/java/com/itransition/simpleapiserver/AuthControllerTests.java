@@ -1,132 +1,92 @@
 package com.itransition.simpleapiserver;
 
 import com.itransition.simpleapiserver.dto.LoginDto;
-import com.itransition.simpleapiserver.dto.SuccessLoginDto;
 import com.itransition.simpleapiserver.dto.UserDto;
-import com.itransition.simpleapiserver.entities.User;
-import com.itransition.simpleapiserver.services.UserService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.*;
-import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class AuthControllerTests {
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
-    private UserService userService;
-
-    private UserDto existsUserDto;
-
-    @BeforeAll
-    public void setUp() {
-        existsUserDto = new UserDto();
-        existsUserDto.setFirstname("AuthLogin");
-        existsUserDto.setLastname("Controller");
-        existsUserDto.setEmail("AuthLogin@controller.com");
-        existsUserDto.setPassword("auth_login_controller_password");
-        User user = userService.saveUser(existsUserDto);
-        existsUserDto.setId(user.getId().intValue());
-    }
-
+public class AuthControllerTests extends Base {
     @Test
-    public void loginShouldReturnWrongCredentialsErrorMessage() {
+    public void loginShouldReturnWrongCredentialsErrorMessage() throws Exception {
         LoginDto loginDto = new LoginDto();
         loginDto.setEmail("wrong@email.com");
         loginDto.setPassword("wrong_password");
-        ResponseEntity<String> response = this.restTemplate.exchange(
-            "http://localhost:" + port + "/auth/login",
-            HttpMethod.POST,
-            new HttpEntity<>(loginDto),
-            String.class
-        );
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        getMockMvc().perform(
+            post("/auth/login")
+                .contentType(APPLICATION_JSON)
+                .content(getObjectMapper().writeValueAsString(loginDto))
+        )
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void loginShouldReturnValidationErrorMessage() {
+    public void loginShouldReturnValidationErrorMessage() throws Exception {
         LoginDto loginDto = new LoginDto();
         loginDto.setEmail("this_trash_email");
         loginDto.setPassword("wrong_password");
-        ResponseEntity<String> response = this.restTemplate.exchange(
-            "http://localhost:" + port + "/auth/login",
-            HttpMethod.POST,
-            new HttpEntity<>(loginDto),
-            String.class
-        );
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        getMockMvc().perform(
+            post("/auth/login")
+                .contentType(APPLICATION_JSON)
+                .content(getObjectMapper().writeValueAsString(loginDto))
+        )
+            .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void loginShouldReturnSuccessMessage() {
+    public void loginShouldReturnSuccessMessage() throws Exception {
         LoginDto loginDto = new LoginDto();
-        loginDto.setEmail(existsUserDto.getEmail());
-        loginDto.setPassword(existsUserDto.getPassword());
-        ResponseEntity<SuccessLoginDto> response = this.restTemplate.exchange(
-            "http://localhost:" + port + "/auth/login",
-            HttpMethod.POST,
-            new HttpEntity<>(loginDto),
-            SuccessLoginDto.class
-        );
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getToken()).isNotEmpty();
+        loginDto.setEmail(getExistsUserDto().getEmail());
+        loginDto.setPassword(getExistsUserDto().getPassword());
+        getMockMvc().perform(
+            post("/auth/login")
+                .contentType(APPLICATION_JSON)
+                .content(getObjectMapper().writeValueAsString(loginDto))
+        )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.token").isNotEmpty());
     }
 
     @Test
-    public void registerShouldReturnSuccessMessage() {
+    public void registerShouldReturnSuccessMessage() throws Exception {
         UserDto userDto = new UserDto();
         userDto.setFirstname("AuthRegister");
         userDto.setLastname("Controller");
         userDto.setEmail("AuthRegister@controller.com");
         userDto.setPassword("auth_register_controller_password");
-        ResponseEntity<String> response = this.restTemplate.exchange(
-            "http://localhost:" + port + "/auth/register",
-            HttpMethod.POST,
-            new HttpEntity<>(userDto),
-            String.class
-        );
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        getMockMvc().perform(
+            post("/auth/register")
+                .contentType(APPLICATION_JSON)
+                .content(getObjectMapper().writeValueAsString(userDto))
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    public void registerShouldReturnValidationErrorMessage() {
+    public void registerShouldReturnValidationErrorMessage() throws Exception {
         UserDto userDto = new UserDto();
         userDto.setFirstname("AuthRegister");
         userDto.setLastname("Controller");
         userDto.setEmail("this_trash_email");
         userDto.setPassword("auth_register_controller_password");
-        ResponseEntity<String> response = this.restTemplate.exchange(
-            "http://localhost:" + port + "/auth/register",
-            HttpMethod.POST,
-            new HttpEntity<>(userDto),
-            String.class
-        );
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        getMockMvc().perform(
+            post("/auth/register")
+                .contentType(APPLICATION_JSON)
+                .content(getObjectMapper().writeValueAsString(userDto))
+        )
+            .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void registerShouldReturnAlreadyCreatedErrorMessage() {
-        ResponseEntity<String> response = this.restTemplate.exchange(
-            "http://localhost:" + port + "/auth/register",
-            HttpMethod.POST,
-            new HttpEntity<>(existsUserDto),
-            String.class
-        );
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    public void registerShouldReturnAlreadyCreatedErrorMessage() throws Exception {
+        getMockMvc().perform(
+            post("/auth/register")
+                .contentType(APPLICATION_JSON)
+                .content(getObjectMapper().writeValueAsString(getExistsUserDto()))
+        )
+            .andExpect(status().isUnauthorized());
     }
 }
