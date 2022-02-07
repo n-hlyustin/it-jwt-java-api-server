@@ -1,4 +1,4 @@
-package com.itransition.simpleapiserver;
+package com.itransition.simpleapiserver.controllers;
 
 import com.itransition.simpleapiserver.dto.LoginDto;
 import com.itransition.simpleapiserver.dto.UserDto;
