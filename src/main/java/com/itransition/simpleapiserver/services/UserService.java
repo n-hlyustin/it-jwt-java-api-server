@@ -1,10 +1,11 @@
 package com.itransition.simpleapiserver.services;
 
-import com.itransition.simpleapiserver.dao.UserDao;
 import com.itransition.simpleapiserver.dto.LoginDto;
 import com.itransition.simpleapiserver.dto.SuccessLoginDto;
 import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.entities.User;
+import com.itransition.simpleapiserver.mappers.UserMapper;
+import com.itransition.simpleapiserver.repositories.UserRepository;
 import com.itransition.simpleapiserver.security.JwtHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,26 +13,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserDao userDao;
 
     private final JwtHelper jwtHelper;
 
+    private final UserRepository userRepository;
+
     private final PasswordEncoder passwordEncoder;
 
-    public void saveUser(UserDto userDto) {
-        userDao.save(userDto);
+    public User saveUser(UserDto userDto) {
+        if (this.getUserByEmail(userDto.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided email already exists");
+        }
+        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        return userRepository.save(user);
     }
 
     public SuccessLoginDto authUser(LoginDto loginDto) {
-        User user = userDao.getByEmail(loginDto.getEmail());
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password are incorrect");
-        }
+        User user = getUserByEmail(loginDto.getEmail())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password are incorrect"));
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password are incorrect");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password are incorrect");
         }
         SuccessLoginDto successLoginDto = new SuccessLoginDto();
         successLoginDto.setToken(jwtHelper.generateToken(user.getId()));
@@ -39,10 +47,11 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userDao.getById(id);
+        return userRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException());
     }
 
-    public User getUserByEmail(String email) {
-        return userDao.getByEmail(email);
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
