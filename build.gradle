@@ -44,7 +44,6 @@ dependencies {
     testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "org.springframework.cloud:spring-cloud-starter-bootstrap:3.1.0"
     testImplementation "com.playtika.testcontainers:embedded-postgresql:2.0.19"
-    testImplementation "org.mockito:mockito-core:3.+"
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 }
