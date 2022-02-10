@@ -6,7 +6,7 @@ import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.entities.User;
 import com.itransition.simpleapiserver.mappers.UserMapper;
 import com.itransition.simpleapiserver.repositories.UserRepository;
-import com.itransition.simpleapiserver.services.UserService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
@@ -52,13 +53,9 @@ public class UserServiceITests {
 
     @Test
     public void userGetByIdShouldNotFoundErrorResponse() {
-        try {
+        Assertions.assertThrows(EntityNotFoundException.class, () -> {
             userService.getUserById(9999L);
-            throw new IllegalAccessException();
-        }
-        catch (Exception e) {
-            assertThat(e.getClass()).isEqualTo(EntityNotFoundException.class);
-        }
+        });
     }
 
     @Test
@@ -87,30 +84,24 @@ public class UserServiceITests {
 
     @Test
     public void userAuthUserShouldWrongEmailErrorResponse() {
-        try {
+        Exception e = Assertions.assertThrows(ResponseStatusException.class, () -> {
             LoginDto loginDto = new LoginDto();
             loginDto.setEmail("userMainWrongEmail@service.com");
             loginDto.setPassword(existsUserDto.getPassword());
             userService.authUser(loginDto);
-            throw new IllegalAccessException();
-        }
-        catch (Exception e) {
-            assertThat(e.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password are incorrect\"");
-        }
+        });
+        assertThat(e.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password are incorrect\"");
     }
 
     @Test
     public void userAuthUserShouldWrongPasswordErrorResponse() {
-        try {
+        Exception e = Assertions.assertThrows(ResponseStatusException.class, () -> {
             LoginDto loginDto = new LoginDto();
             loginDto.setEmail(existsUserDto.getEmail());
             loginDto.setPassword("auth_main_service_wrong_password");
             userService.authUser(loginDto);
-            throw new IllegalAccessException();
-        }
-        catch (Exception e) {
-            assertThat(e.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password are incorrect\"");
-        }
+        });
+        assertThat(e.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password are incorrect\"");
     }
 
     @Test
@@ -124,13 +115,10 @@ public class UserServiceITests {
 
     @Test
     public void userSaveShouldDuplicateErrorResponse() {
-        try {
+        Exception e = Assertions.assertThrows(ResponseStatusException.class, () -> {
             userService.saveUser(existsUserDto);
-            throw new IllegalAccessException();
-        }
-        catch (Exception e) {
-            assertThat(e.getMessage()).isEqualTo("401 UNAUTHORIZED \"Provided email already exists\"");
-        }
+        });
+        assertThat(e.getMessage()).isEqualTo("401 UNAUTHORIZED \"Provided email already exists\"");
     }
 
     @Test
