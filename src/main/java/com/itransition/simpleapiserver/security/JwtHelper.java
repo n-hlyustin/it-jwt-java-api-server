@@ -19,7 +19,7 @@ public class JwtHelper {
     private final SecurityJwtProperties securityJwtProperties;
 
     public String generateToken(Long id) {
-        Date date = Date.from(LocalDate.now().plusDays((long) securityJwtProperties.getTokenLifeTime())
+        Date date = Date.from(LocalDate.now().plusDays(securityJwtProperties.getTokenExpiration().toMillis())
                 .atStartOfDay(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .setSubject(id.toString())

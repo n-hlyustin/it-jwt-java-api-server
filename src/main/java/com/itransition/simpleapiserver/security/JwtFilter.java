@@ -31,6 +31,8 @@ public class JwtFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION = "Authorization";
 
+    public static final String TOKEN_PREFIX = "Bearer ";
+
     private final JwtHelper jwtHelper;
 
     private final UserService userService;
@@ -51,10 +53,9 @@ public class JwtFilter extends GenericFilterBean {
     }
 
     private Optional<String> getTokenFromRequest(HttpServletRequest request) {
-        String prefix = "Bearer ";
         String bearer = request.getHeader(AUTHORIZATION);
-        if (hasText(bearer) && bearer.startsWith(prefix)) {
-            return Optional.of(bearer.substring(prefix.length()));
+        if (hasText(bearer) && bearer.startsWith(TOKEN_PREFIX)) {
+            return Optional.of(bearer.substring(TOKEN_PREFIX.length()));
         }
         return Optional.empty();
     }
