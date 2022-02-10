@@ -11,4 +11,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "security.jwt")
 public class SecurityJwtProperties {
     private String secret;
+    private Number tokenLifeTime;
 }

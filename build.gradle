@@ -2,6 +2,7 @@ plugins {
     id "org.springframework.boot" version "2.6.1"
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
     id "org.liquibase.gradle" version "2.1.0"
+    id "checkstyle"
     id "java"
 }
 
@@ -56,4 +57,16 @@ dependencyManagement {
 
 test {
     useJUnitPlatform()
+}
+
+checkstyle {
+    toolVersion '9.3'
+}
+checkstyleMain {
+    source ='src/main/java'
+    configFile file("checkstyle.xml")
+}
+checkstyleTest {
+    source ='src/test/java'
+    configFile file("checkstyle-test.xml")
 }

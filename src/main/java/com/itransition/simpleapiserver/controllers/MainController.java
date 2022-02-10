@@ -2,7 +2,8 @@ package com.itransition.simpleapiserver.controllers;
 
 import com.itransition.simpleapiserver.entities.User;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
 
 
 @RestController

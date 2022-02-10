@@ -19,7 +19,8 @@ public class JwtHelper {
     private final SecurityJwtProperties securityJwtProperties;
 
     public String generateToken(Long id) {
-        Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date date = Date.from(LocalDate.now().plusDays((long) securityJwtProperties.getTokenLifeTime())
+                .atStartOfDay(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .setSubject(id.toString())
                 .setExpiration(date)
