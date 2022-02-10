@@ -15,7 +15,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
+import java.util.NoSuchElementException;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -26,12 +31,15 @@ public class JwtFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION = "Authorization";
 
+    public static final String TOKEN_PREFIX = "Bearer ";
+
     private final JwtHelper jwtHelper;
 
     private final UserService userService;
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException, NoSuchElementException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException, NoSuchElementException {
         getTokenFromRequest((HttpServletRequest) servletRequest)
             .filter(jwtHelper::isTokenValid)
             .map(jwtHelper::getIdFromToken)
@@ -46,8 +54,8 @@ public class JwtFilter extends GenericFilterBean {
 
     private Optional<String> getTokenFromRequest(HttpServletRequest request) {
         String bearer = request.getHeader(AUTHORIZATION);
-        if (hasText(bearer) && bearer.startsWith("Bearer ")) {
-            return Optional.of(bearer.substring(7));
+        if (hasText(bearer) && bearer.startsWith(TOKEN_PREFIX)) {
+            return Optional.of(bearer.substring(TOKEN_PREFIX.length()));
         }
         return Optional.empty();
     }
