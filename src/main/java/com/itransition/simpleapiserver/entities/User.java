@@ -1,7 +1,10 @@
 package com.itransition.simpleapiserver.entities;
 
 import com.itransition.simpleapiserver.enums.UserRole;
-import lombok.*;
+import lombok.Data;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
