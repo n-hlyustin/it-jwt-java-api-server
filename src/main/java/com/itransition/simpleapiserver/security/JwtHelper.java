@@ -8,8 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.Instant;
 import java.util.Date;
 
 @Component
@@ -19,8 +18,7 @@ public class JwtHelper {
     private final SecurityJwtProperties securityJwtProperties;
 
     public String generateToken(Long id) {
-        Date date = Date.from(LocalDate.now().plusDays(securityJwtProperties.getTokenExpiration().toMillis())
-                .atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date date = Date.from(Instant.now().plusMillis(securityJwtProperties.getTokenExpiration().toMillis()));
         return Jwts.builder()
                 .setSubject(id.toString())
                 .setExpiration(date)
