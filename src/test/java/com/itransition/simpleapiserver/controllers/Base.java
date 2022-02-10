@@ -1,4 +1,4 @@
-package com.itransition.simpleapiserver;
+package com.itransition.simpleapiserver.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itransition.simpleapiserver.configuration.SecurityJwtProperties;

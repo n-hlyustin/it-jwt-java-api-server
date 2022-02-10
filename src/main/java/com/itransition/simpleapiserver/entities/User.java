@@ -2,15 +2,19 @@ package com.itransition.simpleapiserver.entities;
 
 import com.itransition.simpleapiserver.enums.UserRole;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
 @Table(name = "\"user\"")
-@RequiredArgsConstructor
 public class User implements Serializable {
 
     @Id

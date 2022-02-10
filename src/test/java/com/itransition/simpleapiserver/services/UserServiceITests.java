@@ -1,4 +1,4 @@
-package com.itransition.simpleapiserver;
+package com.itransition.simpleapiserver.services;
 
 import com.itransition.simpleapiserver.dto.LoginDto;
 import com.itransition.simpleapiserver.dto.SuccessLoginDto;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest()
 @ActiveProfiles("test")
-public class UserServiceTests {
+public class UserServiceITests {
 
     @Autowired
     private UserRepository userRepository;

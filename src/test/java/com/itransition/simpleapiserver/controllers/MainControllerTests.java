@@ -1,4 +1,4 @@
-package com.itransition.simpleapiserver;
+package com.itransition.simpleapiserver.controllers;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
