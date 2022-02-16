@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -39,7 +40,7 @@ public class JwtFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException, NoSuchElementException {
+            throws IOException, ServletException, NoSuchElementException, EntityNotFoundException {
         getTokenFromRequest((HttpServletRequest) servletRequest)
             .filter(jwtHelper::isTokenValid)
             .map(jwtHelper::getIdFromToken)
