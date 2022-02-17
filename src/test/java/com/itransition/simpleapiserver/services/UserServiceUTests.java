@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -119,9 +118,7 @@ public class UserServiceUTests {
     @Test()
     public void getUserByIdShouldThrowAnError() {
         when(userRepository.findById(any())).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            userService.getUserById(1L);
-        });
+        userService.getUserById(1L);
 
         verify(userRepository, only()).findById(any());
     }

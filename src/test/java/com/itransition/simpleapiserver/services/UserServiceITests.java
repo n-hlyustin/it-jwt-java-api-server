@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,9 +52,7 @@ public class UserServiceITests {
 
     @Test
     public void userGetByIdShouldNotFoundErrorResponse() {
-        Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            userService.getUserById(9999L);
-        });
+        assertThat(userService.getUserById(9999L)).isNull();
     }
 
     @Test

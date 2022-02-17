@@ -8,12 +8,13 @@ import com.itransition.simpleapiserver.mappers.UserMapper;
 import com.itransition.simpleapiserver.repositories.UserRepository;
 import com.itransition.simpleapiserver.security.JwtHelper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Service
@@ -26,6 +27,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    @CachePut(value = "usersCache", key = "#result.id")
     public User saveUser(UserDto userDto) {
         if (this.getUserByEmail(userDto.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided email already exists");
@@ -46,9 +48,10 @@ public class UserService {
         return successLoginDto;
     }
 
+    @Cacheable(value = "usersCache", key = "#p0")
     public User getUserById(Long id) {
         return userRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException());
+            .orElse(null);
     }
 
     public Optional<User> getUserByEmail(String email) {
