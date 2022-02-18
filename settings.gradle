@@ -6,4 +6,5 @@ pluginManagement {
 
 rootProject.name = 'simple-api-server'
 
+include 'api-server';
 include 'events';

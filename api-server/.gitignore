@@ -1,7 +1,6 @@
+HELP.md
 .gradle
 build/
-api-server/src/main/resources/application-*.properties
-api-server/src/main/resources/liquibase-*.properties
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -17,9 +16,6 @@ api-server/src/main/resources/liquibase-*.properties
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
-
-### JPB ###
-.jpb
 
 ### IntelliJ IDEA ###
 .idea
