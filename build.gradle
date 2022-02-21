@@ -41,6 +41,10 @@ subprojects {
     test {
         useJUnitPlatform()
     }
+
+    task wrapper(type: Wrapper){
+        gradleVersion = '7.2'
+    }
 }
 
 repositories {
@@ -50,7 +54,16 @@ repositories {
 dependencies {
     implementation project(':api-server')
     implementation project(':events')
+    implementation "org.liquibase:liquibase-core"
+    implementation "org.mapstruct:mapstruct:1.4.2.Final"
+    implementation 'org.projectlombok:lombok:1.18.18'
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
+    annotationProcessor "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
     testImplementation "org.testcontainers:junit-jupiter"
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 test {

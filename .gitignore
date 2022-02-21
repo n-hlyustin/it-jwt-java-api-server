@@ -1,7 +1,5 @@
 .gradle
 build/
-api-server/src/main/resources/application-*.properties
-api-server/src/main/resources/liquibase-*.properties
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
