@@ -8,11 +8,38 @@ plugins {
 
 group = 'com.itransition'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = "17"
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+ext {
+    set("testcontainersVersion", "1.16.2")
+}
+
+subprojects {
+    apply plugin: "java"
+    apply plugin: "org.springframework.boot"
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+        }
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
 
@@ -23,6 +50,7 @@ repositories {
 dependencies {
     implementation project(':api-server')
     implementation project(':events')
+    testImplementation "org.testcontainers:junit-jupiter"
 }
 
 test {
