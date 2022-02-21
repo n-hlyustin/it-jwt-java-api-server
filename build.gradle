@@ -1,9 +1,6 @@
 plugins {
-    id "org.springframework.boot" version "2.6.1"
-    id "io.spring.dependency-management" version "1.0.11.RELEASE"
-    id "org.liquibase.gradle" version "2.1.0"
-    id "checkstyle"
-    id "java"
+    id "org.springframework.boot" version "2.6.1" apply false
+    id "io.spring.dependency-management" version "1.0.11.RELEASE" apply false
 }
 
 group = 'com.itransition'
@@ -15,7 +12,9 @@ ext {
 
 subprojects {
     apply plugin: "java"
+    apply plugin: "checkstyle"
     apply plugin: "org.springframework.boot"
+    apply plugin: "io.spring.dependency-management"
 
     repositories {
         mavenCentral()
@@ -38,6 +37,39 @@ subprojects {
         }
     }
 
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation "org.liquibase:liquibase-core"
+        implementation "org.mapstruct:mapstruct:1.4.2.Final"
+        implementation 'org.projectlombok:lombok:1.18.18'
+        compileOnly "org.projectlombok:lombok"
+        annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
+        annotationProcessor "org.projectlombok:lombok"
+        annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+        testImplementation "org.testcontainers:junit-jupiter"
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    checkstyle {
+        toolVersion '9.3'
+    }
+    checkstyleMain {
+        source ='src/main/java'
+        configFile file("$rootDir/checkstyle.xml")
+    }
+    checkstyleTest {
+        source ='src/test/java'
+        configFile file("$rootDir/checkstyle-test.xml")
+    }
+
     test {
         useJUnitPlatform()
     }
@@ -45,39 +77,4 @@ subprojects {
     task wrapper(type: Wrapper){
         gradleVersion = '7.2'
     }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation project(':api-server')
-    implementation project(':events')
-    implementation "org.liquibase:liquibase-core"
-    implementation "org.mapstruct:mapstruct:1.4.2.Final"
-    implementation 'org.projectlombok:lombok:1.18.18'
-    compileOnly "org.projectlombok:lombok"
-    annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
-    annotationProcessor "org.projectlombok:lombok"
-    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
-    testImplementation "org.testcontainers:junit-jupiter"
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-}
-
-test {
-    useJUnitPlatform()
-}
-
-checkstyle {
-    toolVersion '9.3'
-}
-checkstyleMain {
-    source ='src/main/java'
-    configFile file("checkstyle.xml")
-}
-checkstyleTest {
-    source ='src/test/java'
-    configFile file("checkstyle-test.xml")
 }
