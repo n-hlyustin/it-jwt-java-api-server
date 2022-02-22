@@ -85,7 +85,7 @@ public class UserServiceITests {
             LoginDto loginDto = new LoginDto();
             loginDto.setEmail("userMainWrongEmail@service.com");
             loginDto.setPassword(existsUserDto.getPassword());
-            userService.authUser(loginDto);
+            userService.authUser(loginDto, "127.0.0.1");
         });
         assertThat(e.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password are incorrect\"");
     }
@@ -96,7 +96,7 @@ public class UserServiceITests {
             LoginDto loginDto = new LoginDto();
             loginDto.setEmail(existsUserDto.getEmail());
             loginDto.setPassword("auth_main_service_wrong_password");
-            userService.authUser(loginDto);
+            userService.authUser(loginDto, "127.0.0.1");
         });
         assertThat(e.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password are incorrect\"");
     }
@@ -106,7 +106,7 @@ public class UserServiceITests {
         LoginDto loginDto = new LoginDto();
         loginDto.setEmail(existsUserDto.getEmail());
         loginDto.setPassword(existsUserDto.getPassword());
-        SuccessLoginDto successLoginDto = userService.authUser(loginDto);
+        SuccessLoginDto successLoginDto = userService.authUser(loginDto, "127.0.0.1");
         assertThat(successLoginDto.getToken()).isNotEmpty();
     }
 

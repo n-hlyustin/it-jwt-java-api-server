@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.ServletRequest;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -24,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    public SuccessLoginDto login(@Validated @RequestBody LoginDto loginDto) {
-        return userService.authUser(loginDto);
+    public SuccessLoginDto login(@Validated @RequestBody LoginDto loginDto, ServletRequest request) {
+        return userService.authUser(loginDto, request.getRemoteAddr());
     }
 }

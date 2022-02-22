@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,6 +33,9 @@ public class UserServiceUTests {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RabbitTemplate rabbitTemplate;
 
     @InjectMocks
     private UserService userService;
@@ -65,11 +69,12 @@ public class UserServiceUTests {
     public void authUserShouldThrowAnEmailNotExistsError() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            userService.authUser(UserGeneratorUtils.generateLoginDto());
+            userService.authUser(UserGeneratorUtils.generateLoginDto(), "127.0.0.1");
         });
 
         verify(userRepository, only()).findByEmail(any());
         verify(jwtHelper, never()).generateToken(any());
+        verify(rabbitTemplate, never()).convertAndSend(any());
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -78,12 +83,13 @@ public class UserServiceUTests {
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(UserGeneratorUtils.generateUserModel()));
         when(passwordEncoder.matches(any(), any())).thenReturn(false);
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            userService.authUser(UserGeneratorUtils.generateLoginDto());
+            userService.authUser(UserGeneratorUtils.generateLoginDto(), "127.0.0.1");
         });
 
         verify(userRepository, only()).findByEmail(any());
         verify(passwordEncoder, only()).matches(any(), any());
         verify(jwtHelper, never()).generateToken(any());
+        verify(rabbitTemplate, never()).convertAndSend(any());
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -91,11 +97,12 @@ public class UserServiceUTests {
     public void authUser() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(UserGeneratorUtils.generateUserModel()));
         when(passwordEncoder.matches(any(), any())).thenReturn(true);
-        userService.authUser(UserGeneratorUtils.generateLoginDto());
+        userService.authUser(UserGeneratorUtils.generateLoginDto(), "127.0.0.1");
 
         verify(userRepository, only()).findByEmail(any());
         verify(passwordEncoder, only()).matches(any(), any());
         verify(jwtHelper, only()).generateToken(any());
+        verify(rabbitTemplate, only()).convertAndSend(any());
         verifyNoMoreInteractions(userRepository);
     }
 
