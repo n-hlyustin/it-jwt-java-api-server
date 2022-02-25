@@ -1,75 +1,80 @@
 plugins {
-    id "org.springframework.boot" version "2.6.1"
-    id "io.spring.dependency-management" version "1.0.11.RELEASE"
-    id "org.liquibase.gradle" version "2.1.0"
-    id "checkstyle"
-    id "java"
+    id "org.springframework.boot" version "2.6.1" apply false
+    id "io.spring.dependency-management" version "1.0.11.RELEASE" apply false
 }
 
-group = "com.itransition"
-version = "0.0.1-SNAPSHOT"
-sourceCompatibility = "17"
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
-
-repositories {
-    mavenCentral()
-}
+group = 'com.itransition'
+version = '0.0.1-SNAPSHOT'
 
 ext {
     set("testcontainersVersion", "1.16.2")
 }
 
-dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-    implementation "org.springframework.boot:spring-boot-starter-data-redis:2.4.0"
-    implementation "org.springframework.boot:spring-boot-starter-security"
-    implementation "org.springframework.boot:spring-boot-starter-cache:2.4.0"
-    implementation "org.liquibase:liquibase-core"
-    implementation "org.postgresql:postgresql"
-    implementation "org.hibernate.validator:hibernate-validator"
-    implementation "javax.persistence:javax.persistence-api"
-    implementation "javax.validation:validation-api"
-    implementation "io.jsonwebtoken:jjwt:0.2"
-    implementation "org.mapstruct:mapstruct:1.4.2.Final"
-    implementation 'org.projectlombok:lombok:1.18.18'
-    compileOnly "org.projectlombok:lombok"
-    liquibaseRuntime "org.postgresql:postgresql"
-    annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
-    annotationProcessor "org.projectlombok:lombok"
-    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.testcontainers:junit-jupiter"
-    testImplementation "org.springframework.cloud:spring-cloud-starter-bootstrap:3.1.0"
-    testImplementation "com.playtika.testcontainers:embedded-postgresql:2.0.19"
-    testImplementation "com.playtika.testcontainers:embedded-redis:2.0.19"
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-}
+subprojects {
+    apply plugin: "java"
+    apply plugin: "checkstyle"
+    apply plugin: "org.springframework.boot"
+    apply plugin: "io.spring.dependency-management"
 
-dependencyManagement {
-    imports {
-        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+    repositories {
+        mavenCentral()
     }
-}
 
-test {
-    useJUnitPlatform()
-}
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 
-checkstyle {
-    toolVersion '9.3'
-}
-checkstyleMain {
-    source ='src/main/java'
-    configFile file("checkstyle.xml")
-}
-checkstyleTest {
-    source ='src/test/java'
-    configFile file("checkstyle-test.xml")
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation "org.liquibase:liquibase-core"
+        implementation "org.mapstruct:mapstruct:1.4.2.Final"
+        implementation 'org.projectlombok:lombok:1.18.18'
+        compileOnly "org.projectlombok:lombok"
+        annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
+        annotationProcessor "org.projectlombok:lombok"
+        annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+        testImplementation "org.testcontainers:junit-jupiter"
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    checkstyle {
+        toolVersion '9.3'
+    }
+    checkstyleMain {
+        source ='src/main/java'
+        configFile file("$rootDir/checkstyle.xml")
+    }
+    checkstyleTest {
+        source ='src/test/java'
+        configFile file("$rootDir/checkstyle-test.xml")
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    task wrapper(type: Wrapper){
+        gradleVersion = '7.2'
+    }
 }

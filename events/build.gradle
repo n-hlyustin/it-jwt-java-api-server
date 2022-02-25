@@ -1,0 +1,12 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-amqp"
+    implementation "javax.persistence:javax.persistence-api"
+    implementation "org.postgresql:postgresql"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.springframework.cloud:spring-cloud-starter-bootstrap:3.1.0"
+    testImplementation "com.playtika.testcontainers:embedded-postgresql:2.0.19"
+    testImplementation "com.playtika.testcontainers:embedded-rabbitmq:2.0.19"
+    testImplementation "org.springframework.amqp:spring-rabbit-test"
+}
