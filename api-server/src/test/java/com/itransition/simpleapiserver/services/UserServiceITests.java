@@ -36,7 +36,7 @@ public class UserServiceITests {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    private UserMapper userMapper;
 
     private User existsUserModel;
 

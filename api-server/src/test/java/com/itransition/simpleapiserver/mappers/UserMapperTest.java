@@ -5,13 +5,11 @@ import com.itransition.simpleapiserver.entities.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserMapperTest {
-    @Autowired
     private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @Test

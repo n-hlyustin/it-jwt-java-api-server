@@ -11,7 +11,6 @@ import com.itransition.simpleapiserver.security.JwtHelper;
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -42,7 +41,7 @@ public abstract class Base {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    private UserMapper userMapper;
 
     private JwtHelper jwtHelper;
 
