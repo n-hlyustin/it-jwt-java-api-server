@@ -11,6 +11,7 @@ import com.itransition.simpleapiserver.security.JwtHelper;
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -40,6 +41,9 @@ public abstract class Base {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+
     private JwtHelper jwtHelper;
 
     private UserDto existsUserDto;
@@ -53,7 +57,7 @@ public abstract class Base {
         existsUserDto.setLastname("Test");
         existsUserDto.setEmail("base@test.com");
         existsUserDto.setPassword("base_test_password");
-        User userModel = UserMapper.INSTANCE.userDtoToUser(existsUserDto);
+        User userModel = userMapper.userDtoToUser(existsUserDto);
         userModel.setPassword(passwordEncoder.encode(existsUserDto.getPassword()));
         existsUserModel = userRepository.save(userModel);
     }

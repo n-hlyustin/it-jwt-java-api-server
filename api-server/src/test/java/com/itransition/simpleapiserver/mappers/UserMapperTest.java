@@ -4,11 +4,16 @@ import com.itransition.simpleapiserver.dto.UserDto;
 import com.itransition.simpleapiserver.entities.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserMapperTest {
+    @Autowired
+    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+
     @Test
     public void shouldMapUserDtoToUser() {
         UserDto userDto = new UserDto();
@@ -18,7 +23,7 @@ public class UserMapperTest {
         userDto.setEmail("mail@test.com");
         userDto.setPassword("test_password");
 
-        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
+        User user = userMapper.userDtoToUser(userDto);
 
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(1L);
@@ -37,7 +42,7 @@ public class UserMapperTest {
         user.setEmail("mail@test.com");
         user.setPassword("test_password");
 
-        UserDto userDto = UserMapper.INSTANCE.userToUserDto(user);
+        UserDto userDto = userMapper.userToUserDto(user);
 
         assertThat(userDto).isNotNull();
         assertThat(userDto.getId()).isEqualTo(1L);

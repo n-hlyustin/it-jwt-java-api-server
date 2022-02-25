@@ -10,6 +10,7 @@ import com.itransition.simpleapiserver.messages.AuthLoggerMessage;
 import com.itransition.simpleapiserver.repositories.UserRepository;
 import com.itransition.simpleapiserver.security.JwtHelper;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -33,17 +35,21 @@ public class UserService {
 
     private final RabbitTemplate rabbitTemplate;
 
+    private final HttpServletRequest request;
+
+    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+
     @CachePut(value = "usersCache", key = "#result.id")
     public User saveUser(UserDto userDto) {
         if (this.getUserByEmail(userDto.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided email already exists");
         }
-        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
+        User user = userMapper.userDtoToUser(userDto);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         return userRepository.save(user);
     }
 
-    public SuccessLoginDto authUser(LoginDto loginDto, String ipAdress) {
+    public SuccessLoginDto authUser(LoginDto loginDto) {
         User user = getUserByEmail(loginDto.getEmail())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password are incorrect"));
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
@@ -51,7 +57,8 @@ public class UserService {
         }
         SuccessLoginDto successLoginDto = new SuccessLoginDto();
         successLoginDto.setToken(jwtHelper.generateToken(user.getId()));
-        AuthLoggerMessage authLoggerMessage = new AuthLoggerMessage(user.getId(), ipAdress, Instant.now().getEpochSecond());
+        String ipAddress = request.getRemoteAddr();
+        AuthLoggerMessage authLoggerMessage = new AuthLoggerMessage(user.getId(), ipAddress, Instant.now().getEpochSecond());
         rabbitTemplate.convertAndSend(RabbitMqConfiguration.AUTH_LOGGER_QUEUE_NAME, authLoggerMessage);
         return successLoginDto;
     }

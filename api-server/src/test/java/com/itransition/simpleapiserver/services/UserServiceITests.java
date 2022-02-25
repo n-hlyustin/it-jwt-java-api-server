@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +35,9 @@ public class UserServiceITests {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+
     private User existsUserModel;
 
     private UserDto existsUserDto;
@@ -45,7 +49,7 @@ public class UserServiceITests {
         existsUserDto.setLastname("Service");
         existsUserDto.setEmail("userMain@service.com");
         existsUserDto.setPassword("auth_main_service_password");
-        User userModel = UserMapper.INSTANCE.userDtoToUser(existsUserDto);
+        User userModel = userMapper.userDtoToUser(existsUserDto);
         userModel.setPassword(passwordEncoder.encode(existsUserDto.getPassword()));
         existsUserModel = userRepository.save(userModel);
     }
@@ -85,7 +89,7 @@ public class UserServiceITests {
             LoginDto loginDto = new LoginDto();
             loginDto.setEmail("userMainWrongEmail@service.com");
             loginDto.setPassword(existsUserDto.getPassword());
-            userService.authUser(loginDto, "127.0.0.1");
+            userService.authUser(loginDto);
         });
         assertThat(e.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password are incorrect\"");
     }
@@ -96,7 +100,7 @@ public class UserServiceITests {
             LoginDto loginDto = new LoginDto();
             loginDto.setEmail(existsUserDto.getEmail());
             loginDto.setPassword("auth_main_service_wrong_password");
-            userService.authUser(loginDto, "127.0.0.1");
+            userService.authUser(loginDto);
         });
         assertThat(e.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password are incorrect\"");
     }
@@ -106,7 +110,7 @@ public class UserServiceITests {
         LoginDto loginDto = new LoginDto();
         loginDto.setEmail(existsUserDto.getEmail());
         loginDto.setPassword(existsUserDto.getPassword());
-        SuccessLoginDto successLoginDto = userService.authUser(loginDto, "127.0.0.1");
+        SuccessLoginDto successLoginDto = userService.authUser(loginDto);
         assertThat(successLoginDto.getToken()).isNotEmpty();
     }
 
